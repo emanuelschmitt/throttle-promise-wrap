@@ -31,14 +31,14 @@ describe('Throttle', () => {
   test('should throttle requests', async done => {
     const rps = 50;
     const throttle = new Throttle({ rps });
-    const requests = [];
+    const requests: any[] = [];
     const requestAmount = 100;
 
     for (let i = 0; i < requestAmount; i++) {
       const fn = async () => {
         const start = Date.now();
         return Promise.resolve({ id: i, start });
-      }
+      };
       requests.push({
         fn: throttle.wrap(fn),
         id: i,
@@ -55,13 +55,12 @@ describe('Throttle', () => {
             return;
           }
 
-          const request: { fn: Function } = requests.pop()!;
+          const request = requests.pop()!;
 
-          const { id, start } = await request?.fn()
-          processedRequests.push({ id: id, start: start })
+          const { id, start } = await request?.fn();
+          processedRequests.push({ id, start });
 
           if (processedRequests.length === requestAmount) {
-            console.log('resolving...')
             resolve(processedRequests);
           }
         }, 10);
@@ -73,9 +72,9 @@ describe('Throttle', () => {
 
     for (let j = 0; j < processed.length - 1; j++) {
       const startTime: number = processed[j].start;
-      const startTimeNext: number = processed[j+1].start;
+      const startTimeNext: number = processed[j + 1].start;
 
-      const isLowerThanRps = (1000 / rps) <= (startTimeNext - startTime);
+      const isLowerThanRps = 1000 / rps <= startTimeNext - startTime;
       expect(isLowerThanRps).toBeTruthy();
     }
 

@@ -2,16 +2,19 @@ type ThrottleOptions = {
   rps: number;
 };
 
-type QuedPromise<R> = {
+type QueuedPromise<R> = {
   resolve: (value?: R) => void;
   reject: (reason: any) => void;
   fn: (...args: any) => Promise<R>;
   args: any[];
 };
 
+/**
+ * Throttle class to control the throttling of wrapped functions.
+ */
 export default class Throttle {
   private options: ThrottleOptions;
-  private queue: QuedPromise<any>[];
+  private queue: QueuedPromise<any>[];
   private lastExecution: number;
 
   public constructor(options: ThrottleOptions) {
@@ -30,8 +33,8 @@ export default class Throttle {
     return (...args: A) =>
       new Promise<R>((resolve, reject) => {
         this.queue.push({
-          fn: fn,
-          args: args,
+          fn,
+          args,
           resolve,
           reject,
         });
